@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			crossorigin="anonymous">
+	</script>
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+	<body>
+        
+        
+        https://r2wmobile4.running2win.com/api.asmx
+        val.imageUrl
+        pastDaysTotalMiles
+        userName
+
+        <div style= "padding:20px; width:600px">
+            <table class="table table-sm" width="300">
+                <tr>
+                    <th width="100" scope="row">Count: </th>
+                    <td><input type="text" value="0" id="txtCount" class="form-control" /></td>
+                </tr>
+                <tr>
+                    <th scope="row">Filter: </th>
+                    <td><input type="text" value="" id="txtFilter" class="form-control" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input class="btn btn-primary" type="button" id="btnGetCars" value="Get Cars" />
+                        <input class="btn btn-primary" type="button" id="btnClear" value="Clear" />
+                        <input class="btn btn-danger" type="button" id="btnGetCustomers" value="Get Customers" />
+                        <input class="btn btn-success" type="button" id="btnTop20" value="Top20" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <ol id="ulList" class="list-group"></ol>
+                    </td>
+                </tr>            
+            </table>
+        </div>	
+
+
+		<script type="text/javascript">
+			$(document).ready(function () {
+				var ulList = $('#ulList');
+				var count = $('#txtCount');
+				var filter = $('#txtFilter');
+
+				//===================================================================================================
+				// Get a list of random cars from an API
+				//===================================================================================================
+				$('#btnGetCars').click(function () {
+				    ajax("Cars", { "count": count.val(), "filter": filter.val() }, function (data) {
+						ulList.empty();
+						$.each(data, function (index, val) {
+							ulList.append('<li class="list-group-item">' + (val.Year + ', ' + val.Make + ' ' + val.Model).replace(filter.val(),'<span style="background-color:yellow;">' + filter.val() + '</span>') + '</li>')
+						});
+					});
+				});
+
+				//===================================================================================================
+				// Get a list of customers from the database using an API
+				//===================================================================================================
+				$('#btnGetCustomers').click(function () {
+					ajax("getCustomersByFilter", { "count": count.val(), "filter": filter.val() }, function (data) {
+						ulList.empty();
+						$.each(data, function (index, val) {
+							ulList.append('<li class="list-group-item"><img src="https://robohash.org/' + val.EmailAddress + '.png" width="50" height="50" />' + (val.EmailAddress + ': ' + val.FirstName + ' ' + val.LastName).replace(filter.val(),'<span style="background-color:yellow;">' + filter.val() + '</span>') + '</li>')
+						});
+					});
+				});
+
+				//===================================================================================================
+				// Button to clear the fields
+				//===================================================================================================
+				$('#btnClear').click(function () {
+					ulList.empty();
+					count.val('0');
+					filter.val('');
+				});
+
+			    //===================================================================================================
+			    // Get a list of data from TOP20 API
+			    //===================================================================================================
+				$('#btnTop20').click(function () {
+				    top20("top20", { "returnMales": "true"}, function (data) {
+				        ulList.empty();
+				        $.each(data, function (index, val) {
+				            ulList.append('<li class="list-group-item"><img src="' + val.imageUrl + '" width="50" height="50" />' 
+                                + (val.userName + ', ' + val.firstName + ', ' + val.lastName))
+				        });
+				    });
+				});
+
+				//===================================================================================================
+				// Generic method for AJAX calls
+				//===================================================================================================
+				function ajax(method, data, fn) {
+					$.ajax({
+						type: 'POST',
+						url: 'MyGuitarShopAPI.asmx/' + method,
+						dataType: 'json',
+						data: data,
+						success: fn
+					});
+				}
+
+				function top20(method, data, fn) {
+				    $.ajax({
+				        type: 'POST',
+				        url: 'https://r2wmobile4.running2win.com/api.asmx/' + method,
+				        dataType: 'json',
+				        data: data,
+				        success: fn
+				    });
+				}
+			});
+		</script>
+	</body>
+</html>

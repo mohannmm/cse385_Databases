@@ -1,0 +1,14 @@
+﻿CREATE TABLE tblFriends(
+
+friendID	INT				NOT NULL	IDENTITY	PRIMARY KEY,
+firstName	NVARCHAR(20)	NOT NULL,
+lastName	NVARCHAR(20)	NOT NULL,
+age			INT				NOT NULL	DEFAULT 0,
+phoneNumber	NVARCHAR(20)	NOT NULL	DEFAULT ''	
+
+
+);
+
+/*
+
+*/
